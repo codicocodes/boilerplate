@@ -2,6 +2,9 @@
 run:
 	go run ./cmd/
 
+test:
+	go test ./internals/UserService... --race
+
 db:
 	docker-compose up -d
 

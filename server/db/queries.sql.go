@@ -11,17 +11,23 @@ import (
 
 const createUser = `-- name: CreateUser :one
 INSERT INTO users (
-  username
+  username,
+  password
 ) VALUES (
-  $1
+  $1, $2
 )
-RETURNING id, username
+RETURNING id, username, password
 `
 
-func (q *Queries) CreateUser(ctx context.Context, username string) (User, error) {
-	row := q.db.QueryRowContext(ctx, createUser, username)
+type CreateUserParams struct {
+	Username string
+	Password string
+}
+
+func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, error) {
+	row := q.db.QueryRowContext(ctx, createUser, arg.Username, arg.Password)
 	var i User
-	err := row.Scan(&i.ID, &i.Username)
+	err := row.Scan(&i.ID, &i.Username, &i.Password)
 	return i, err
 }
 
@@ -36,19 +42,19 @@ func (q *Queries) DeleteUser(ctx context.Context, id int64) error {
 }
 
 const getUser = `-- name: GetUser :one
-SELECT id, username FROM users
+SELECT id, username, password FROM users
 WHERE id = $1 LIMIT 1
 `
 
 func (q *Queries) GetUser(ctx context.Context, id int64) (User, error) {
 	row := q.db.QueryRowContext(ctx, getUser, id)
 	var i User
-	err := row.Scan(&i.ID, &i.Username)
+	err := row.Scan(&i.ID, &i.Username, &i.Password)
 	return i, err
 }
 
 const listUsers = `-- name: ListUsers :many
-SELECT id, username FROM users
+SELECT id, username, password FROM users
 ORDER BY username
 `
 
@@ -61,7 +67,7 @@ func (q *Queries) ListUsers(ctx context.Context) ([]User, error) {
 	var items []User
 	for rows.Next() {
 		var i User
-		if err := rows.Scan(&i.ID, &i.Username); err != nil {
+		if err := rows.Scan(&i.ID, &i.Username, &i.Password); err != nil {
 			return nil, err
 		}
 		items = append(items, i)

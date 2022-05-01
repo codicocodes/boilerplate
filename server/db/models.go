@@ -6,11 +6,8 @@ package db
 
 import ()
 
-type Foo struct {
-	ID int64
-}
-
 type User struct {
 	ID       int64
 	Username string
+	Password string
 }
