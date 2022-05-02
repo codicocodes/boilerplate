@@ -19,7 +19,7 @@ func New(db *db.Queries, input UserInput) UserService {
   }
 }
 
-func (s *UserService) Register() (*UserOutput, error) {
+func (s *UserService) Register() (*UserData, error) {
   if err := s.input.validate(); err != nil {
     return nil, newBadUserInputError(err.Error())
 	}
@@ -35,9 +35,9 @@ func (s *UserService) Register() (*UserOutput, error) {
     },
   )
   if err != nil {
-    return nil, newFailedUserCreationError(err.Error())
+    return nil, newFailedUserCreationError("user already exists")
 	}
-  return getUserOutput(user), nil
+  return getUserData(user), nil
 }
 
 func (s *UserService) Login() (*JwtToken, error) {

@@ -26,5 +26,7 @@ func newFailedUserCreationError(msg string) FailedUserCreationError  {
     return FailedUserCreationError{msg: msg}
 }
 
-
 var ErrLoginFailed = errors.New("login failed")
+
+var ErrInvalidToken = errors.New("invalid token")
+

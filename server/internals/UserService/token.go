@@ -8,11 +8,10 @@ import (
 	"github.com/golang-jwt/jwt"
 )
 
-const JWT_TIME_MINUTES = 10
+const JWT_TIME_MINUTES = 60
 
 func getJwtSigningKey() []byte {
    return []byte(os.Getenv("TOKEN_SECRET"))
-
 }
 
 // JWT used to authenticate with and to grant authorization into the system
@@ -23,13 +22,14 @@ func (t JwtToken) Validate() (*Claims, error) {
 	tkn, err := jwt.ParseWithClaims(string(t), claims, func(token *jwt.Token) (interface{}, error) {
 		return getJwtSigningKey(), nil
 	})
-	if err != nil {
-     return nil, ErrLoginFailed
-	}
-	if !tkn.Valid {
-     return nil, ErrLoginFailed
+	if err != nil || !tkn.Valid {
+     return nil, ErrInvalidToken
 	}
   return claims, nil
+}
+
+func (t JwtToken) GetUser(*UserData)  {
+   
 }
 
 type Claims struct {

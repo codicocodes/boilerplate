@@ -50,5 +50,19 @@ func (app *App) getRoutes() []Route {
 			Version: v1,
 			Middlewares: []Middleware{},
 		},
+		{
+			Path: "/register",
+			Method: http.MethodPost,
+			Handler: app.Register,
+			Version: v1,
+			Middlewares: []Middleware{},
+		},
+		{
+			Path: "/login",
+			Method: http.MethodPost,
+			Handler: app.Login,
+			Version: v1,
+			Middlewares: []Middleware{},
+		},
 	}
 }
