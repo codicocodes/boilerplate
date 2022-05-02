@@ -1,25 +1,30 @@
 package userservice
 
-type BadUserInput struct {
+import "errors"
+
+type BadUserInputError struct {
     msg string
 }
 
-func (e BadUserInput) Error() string {
+func (e BadUserInputError) Error() string {
     return e.msg
 }
 
-func newBadUserInputError(msg string) BadUserInput  {
-    return BadUserInput{msg: msg}
+func newBadUserInputError(msg string) BadUserInputError  {
+    return BadUserInputError{msg: msg}
 }
 
-type FailedUserCreation struct {
+type FailedUserCreationError struct {
     msg string
 }
 
-func (e FailedUserCreation) Error() string {
+func (e FailedUserCreationError) Error() string {
     return e.msg
 }
 
-func newFailedUserCreationError(msg string) FailedUserCreation  {
-    return FailedUserCreation{msg: msg}
+func newFailedUserCreationError(msg string) FailedUserCreationError  {
+    return FailedUserCreationError{msg: msg}
 }
+
+
+var ErrLoginFailed = errors.New("login failed")

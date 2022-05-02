@@ -1,9 +1,27 @@
 
-run:
+run-dev:
 	go run ./cmd/
 
+run: 
+	./app
+
+build: 
+	go build -o app ./cmd/* 
+
 test:
-	go test ./internals/UserService... --race
+	go test ./internals/UserService... -v --race
+
+coverage:
+	go test ./internals/UserService... -v \
+	-coverpkg=./internals/UserService/... \
+	-coverprofile=coverage.out \
+	./internals/UserService/...
+
+coverage-details:
+	go tool cover -func=coverage.out
+
+coverage-html:
+	go tool cover -html=coverage.out
 
 db:
 	docker-compose up -d
@@ -11,6 +29,6 @@ db:
 generate:
 	sqlc generate
 
-sqlc-install:
+install-dependencies:
 	go install github.com/kyleconroy/sqlc/cmd/sqlc@latest
 
