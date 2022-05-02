@@ -9,6 +9,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+
 func setupRegisterInputs(t *testing.T, DB testingutils.TestDB) (userservice.UserService, userservice.UserInput){
   input := userservice.UserInput{
     Username: "codico",
@@ -100,6 +101,28 @@ func TestLoginReceiveToken(t *testing.T) {
   }
   if token == nil {
     t.Error("Login: expected to receive token")
+  }
+}
+
+func TestLoginWrongPassword(t *testing.T) {
+  // Arrange
+  DB := testingutils.NewTestConnection()
+  defer DB.Cleanup()
+  svcRegister, registerInputs := setupRegisterInputs(t, DB)
+  _, _ = svcRegister.Register()
+
+  failedInput := userservice.UserInput{
+    Username: registerInputs.Username,
+    PlaintextPassword: "not the same password",
+  }
+  svcLogin := userservice.New(DB.Queries, failedInput)
+
+  // Act
+  token, err := svcLogin.Login()
+
+  // Assert
+  if err == nil {
+    t.Errorf("Login: expected to receive error, received token %s", string(*token))
   }
 }
 

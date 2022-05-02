@@ -23,4 +23,3 @@ func RegisterMiddlewares(handler http.HandlerFunc, middlewares []Middleware) htt
 	}
 	return handler
 }
-

@@ -20,7 +20,6 @@ func newApp(db *db.Queries, logger *log.Logger) App {
 	}
 }
 
-
 func (app *App) Router() http.Handler {
 	r := httprouter.New()
 	r.NotFound = http.HandlerFunc(http.NotFound)
