@@ -9,28 +9,28 @@ import (
 
 type UserService struct {
 	db    db.Queries
-	input UserInput
+	credentials Credentials
 }
 
-func New(db *db.Queries, input UserInput) UserService {
+func NewAuth(db *db.Queries, credentials Credentials) UserService {
 	return UserService{
 		db:    *db,
-		input: input,
+		credentials: credentials,
 	}
 }
 
 func (s *UserService) Register() (*UserData, error) {
-	if err := s.input.validate(); err != nil {
+	if err := s.credentials.validate(); err != nil {
 		return nil, newBadUserInputError(err.Error())
 	}
-	hashedPassword, err := s.input.getHashedPassword()
+	hashedPassword, err := s.credentials.getHashedPassword()
 	if err != nil {
 		return nil, newBadUserInputError("password can't be hashed")
 	}
 	user, err := s.db.CreateUser(
 		context.Background(),
 		db.CreateUserParams{
-			Username: s.input.Username,
+			Username: s.credentials.Username,
 			Password: string(hashedPassword),
 		},
 	)
@@ -41,11 +41,11 @@ func (s *UserService) Register() (*UserData, error) {
 }
 
 func (s *UserService) Login() (*JwtToken, error) {
-	user, err := s.db.GetUserByUsername(context.Background(), s.input.Username)
+	user, err := s.db.GetUserByUsername(context.Background(), s.credentials.Username)
 	if err != nil {
 		return nil, ErrLoginFailed
 	}
-	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(s.input.PlaintextPassword))
+	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(s.credentials.PlaintextPassword))
 	if err != nil {
 		return nil, ErrLoginFailed
 	}

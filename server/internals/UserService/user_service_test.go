@@ -9,12 +9,12 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func setupRegisterInputs(t *testing.T, DB testingutils.TestDB) (userservice.UserService, userservice.UserInput) {
-	input := userservice.UserInput{
+func setupRegisterInputs(t *testing.T, DB testingutils.TestDB) (userservice.UserService, userservice.Credentials) {
+	input := userservice.Credentials{
 		Username:          "codico",
 		PlaintextPassword: "Asdfasdf123",
 	}
-	service := userservice.New(DB.Queries, input)
+	service := userservice.NewAuth(DB.Queries, input)
 	return service, input
 }
 
@@ -110,11 +110,11 @@ func TestLoginWrongPassword(t *testing.T) {
 	svcRegister, registerInputs := setupRegisterInputs(t, DB)
 	_, _ = svcRegister.Register()
 
-	failedInput := userservice.UserInput{
+	failedInput := userservice.Credentials{
 		Username:          registerInputs.Username,
 		PlaintextPassword: "not the same password",
 	}
-	svcLogin := userservice.New(DB.Queries, failedInput)
+	svcLogin := userservice.NewAuth(DB.Queries, failedInput)
 
 	// Act
 	token, err := svcLogin.Login()

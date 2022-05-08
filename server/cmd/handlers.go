@@ -20,13 +20,13 @@ func (app *App) Ping(w http.ResponseWriter, _ *http.Request) {
 }
 
 func (app *App) Register(w http.ResponseWriter, r *http.Request) {
-	var input userservice.UserInput
-	err := json.NewDecoder(r.Body).Decode(&input)
+	var credentials userservice.Credentials
+	err := json.NewDecoder(r.Body).Decode(&credentials)
 	if err != nil {
 		http.Error(w, "Invalid user input", http.StatusBadRequest)
 		return
 	}
-	svc := userservice.New(app.db, input)
+	svc := userservice.NewAuth(app.db, credentials)
 	user, err := svc.Register()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -36,13 +36,13 @@ func (app *App) Register(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *App) Login(w http.ResponseWriter, r *http.Request) {
-	var input userservice.UserInput
+	var input userservice.Credentials
 	err := json.NewDecoder(r.Body).Decode(&input)
 	if err != nil {
 		http.Error(w, "Invalid user input", http.StatusBadRequest)
 		return
 	}
-	svc := userservice.New(app.db, input)
+	svc := userservice.NewAuth(app.db, input)
 	token, err := svc.Login()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
