@@ -64,5 +64,12 @@ func (app *App) getRoutes() []Route {
 			Version:     v1,
 			Middlewares: []Middleware{},
 		},
+		{
+			Path:        "/notifier",
+			Method:      http.MethodGet,
+			Handler:     app.NotifierConnect,
+			Version:     v1,
+			Middlewares: []Middleware{SSEMiddleware},
+		},
 	}
 }

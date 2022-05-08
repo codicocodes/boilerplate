@@ -2,6 +2,7 @@ package userservice
 
 import (
 	"errors"
+	"fmt"
 	"os"
 	"time"
 
@@ -45,6 +46,7 @@ func (t JwtToken) RefreshToken() (*JwtToken, error) {
 }
 
 func (t JwtToken) GetUser() (*UserData, error) {
+	fmt.Println("[WARNING]: GetUser has not been implemented.")
 	return nil, errors.New("not implemented")
 }
 

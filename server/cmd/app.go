@@ -5,18 +5,21 @@ import (
 	"net/http"
 
 	"github.com/codico/boilerplate/db"
+	notifierservice "github.com/codico/boilerplate/internals/NotifierService"
 	"github.com/julienschmidt/httprouter"
 )
 
 type App struct {
-	log *log.Logger
-	db  *db.Queries
+	log      *log.Logger
+	db       *db.Queries
+	notifier *notifierservice.NotifierService
 }
 
-func newApp(db *db.Queries, logger *log.Logger) App {
+func newApp(db *db.Queries, logger *log.Logger, notifier *notifierservice.NotifierService) App {
 	return App{
-		log: logger,
-		db:  db,
+		log:      logger,
+		db:       db,
+		notifier: notifier,
 	}
 }
 

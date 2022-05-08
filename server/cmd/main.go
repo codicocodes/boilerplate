@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/codico/boilerplate/db"
+	notifierservice "github.com/codico/boilerplate/internals/NotifierService"
 	_ "github.com/joho/godotenv/autoload"
 	_ "github.com/lib/pq"
 )
@@ -16,7 +17,16 @@ func main() {
 	conn := connectDB(logger)
 	defer conn.Close()
 	db := db.New(conn)
-	app := newApp(db, logger)
+	notifier := notifierservice.New()
+
+	go func() {
+		for {
+			notifier.BroadcastAll(time.Now().String())
+			time.Sleep(time.Second * 5)
+		}
+	}()
+
+	app := newApp(db, logger, notifier)
 	server := http.Server{
 		Addr:         fmt.Sprintf(":%s", getPort()),
 		Handler:      app.Router(),

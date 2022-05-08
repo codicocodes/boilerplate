@@ -50,3 +50,34 @@ func (app *App) Login(w http.ResponseWriter, r *http.Request) {
 	}
 	SendResponse(w, token)
 }
+
+func (app *App) Refresh(w http.ResponseWriter, r *http.Request) {
+	prevToken := parseTokenFromReq(r)
+	newToken, err := prevToken.RefreshToken()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	SendResponse(w, newToken)
+}
+
+func (app *App) NotifierConnect(w http.ResponseWriter, r *http.Request) {
+	flusher, ok := w.(http.Flusher)
+	if !ok {
+		http.Error(w, "Connection does not support streaming", http.StatusBadRequest)
+		return
+	}
+	d := r.Context().Done()
+	notifier, id := app.notifier.Connect()
+	defer fmt.Printf("Closing channel for %s\n", id)
+	for {
+		select {
+		case <-d:
+			app.notifier.Disconnect(id)
+			return
+		case data := <-notifier:
+			fmt.Fprintf(w, "data: %v \n\n", data)
+			flusher.Flush()
+		}
+	}
+}
