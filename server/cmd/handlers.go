@@ -8,7 +8,7 @@ import (
 	userservice "github.com/codico/boilerplate/internals/UserService"
 )
 
-func SendResponse[T any](w http.ResponseWriter, data T) {
+func SendResponse(w http.ResponseWriter, data any) {
 	err := json.NewEncoder(w).Encode(&data)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -48,5 +48,5 @@ func (app *App) Login(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	SendResponse(w, string(*token))
+	SendResponse(w, token)
 }

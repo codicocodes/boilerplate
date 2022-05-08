@@ -150,3 +150,26 @@ func TestTokenValidateCorrectClaims(t *testing.T) {
 		t.Errorf("Token Validate: expected to receive ID %d, received %d", user.ID, claims.ID)
 	}
 }
+
+func TestTokenRefreshCorrectRefreshesRemaining(t *testing.T) {
+	// Arrange
+	expectedRefreshesRemaining := userservice.MAX_REFRESHES - 1
+	DB := testingutils.NewTestConnection()
+	defer DB.Cleanup()
+	service, _ := setupRegisterInputs(t, DB)
+	_, _ = service.Register()
+	token, _ := service.Login()
+
+	// Act
+	token, err := token.RefreshToken()
+
+	// Assert
+	if err != nil {
+		t.Errorf("Token Refresh: expected to not receive error, received: %s", err.Error())
+	}
+	claims, _ := token.Validate()
+
+	if claims.RefreshesRemaining != expectedRefreshesRemaining {
+		t.Errorf("Token Refresh: expected to receive %d refreshes remaining, received: %d", expectedRefreshesRemaining, claims.RefreshesRemaining)
+	}
+}

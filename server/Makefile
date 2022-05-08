@@ -1,11 +1,10 @@
-
 run-dev:
 	go run ./cmd/
 
-run: 
+run:
 	./app
 
-build: 
+build:
 	go build -o app ./cmd/* 
 
 test:
@@ -28,6 +27,12 @@ db:
 
 generate:
 	sqlc generate
+
+migrate:
+	dbmate -e DATABASE_URL up
+
+migrate-test:
+	dbmate -e TESTING_DATABASE_URL up
 
 install-dependencies:
 	go install github.com/kyleconroy/sqlc/cmd/sqlc@latest

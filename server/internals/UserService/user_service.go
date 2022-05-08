@@ -49,7 +49,7 @@ func (s *UserService) Login() (*JwtToken, error) {
 	if err != nil {
 		return nil, ErrLoginFailed
 	}
-	token, err := NewTokenFromUser(user)
+	token, err := newTokenFromUser(user)
 	if err != nil {
 		return nil, ErrLoginFailed
 	}

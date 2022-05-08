@@ -9,8 +9,3 @@ require (
 	github.com/lib/pq v1.10.5
 	golang.org/x/crypto v0.0.0-20220427172511-eb4f295cb31f
 )
-
-require (
-	golang.org/x/sys v0.0.0-20211019181941-9d821ace8654 // indirect
-	golang.org/x/tools v0.1.10 // indirect
-)

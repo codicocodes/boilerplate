@@ -1,6 +1,7 @@
 package userservice
 
 import (
+	"errors"
 	"os"
 	"time"
 
@@ -9,6 +10,8 @@ import (
 )
 
 const JWT_TIME_MINUTES = 60
+
+const MAX_REFRESHES = 100
 
 func getJwtSigningKey() []byte {
 	return []byte(os.Getenv("TOKEN_SECRET"))
@@ -28,21 +31,36 @@ func (t JwtToken) Validate() (*Claims, error) {
 	return claims, nil
 }
 
-func (t JwtToken) GetUser(*UserData) {
+func (t JwtToken) RefreshToken() (*JwtToken, error) {
+	claims, err := t.Validate()
+	if err != nil {
+		return nil, ErrInvalidToken
+	}
+	if claims.RefreshesRemaining < 1 {
+		return nil, ErrInvalidToken
+	}
+	refreshesRemaining := claims.RefreshesRemaining - 1
+	token, err := generateToken(claims.ID, claims.Username, refreshesRemaining)
+	return &token, err
+}
 
+func (t JwtToken) GetUser() (*UserData, error) {
+	return nil, errors.New("not implemented")
 }
 
 type Claims struct {
-	ID       int64  `json:"id"`
-	Username string `json:"username"`
+	ID                 int64  `json:"id"`
+	Username           string `json:"username"`
+	RefreshesRemaining int    `json:"refreshesRemaining"`
 	jwt.StandardClaims
 }
 
-func NewTokenFromUser(u db.User) (JwtToken, error) {
+func generateToken(id int64, username string, refreshesRemaining int) (JwtToken, error) {
 	expirationTime := time.Now().Add(JWT_TIME_MINUTES * time.Minute)
 	claims := &Claims{
-		ID:       u.ID,
-		Username: u.Username,
+		ID:                 id,
+		Username:           username,
+		RefreshesRemaining: refreshesRemaining,
 		StandardClaims: jwt.StandardClaims{
 			IssuedAt:  time.Now().Unix(),
 			ExpiresAt: expirationTime.Unix(),
@@ -51,4 +69,9 @@ func NewTokenFromUser(u db.User) (JwtToken, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	tokenString, err := token.SignedString(getJwtSigningKey())
 	return JwtToken(tokenString), err
+}
+
+func newTokenFromUser(u db.User) (JwtToken, error) {
+	token, err := generateToken(u.ID, u.Username, MAX_REFRESHES)
+	return token, err
 }
