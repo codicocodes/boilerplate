@@ -23,15 +23,15 @@ const (
 )
 
 type Route struct {
-	Path    string
-	Handler http.HandlerFunc
-	Method  Method
-	Version Version
+	Path        string
+	Handler     http.HandlerFunc
+	Method      Method
+	Version     Version
 	Middlewares []Middleware
 }
 
-func registerRoutes(r *httprouter.Router, routes []Route){
-	for _, route := range(routes) {
+func registerRoutes(r *httprouter.Router, routes []Route) {
+	for _, route := range routes {
 		path := fmt.Sprintf("/%s%s", route.Version, route.Path)
 		handler := RegisterMiddlewares(
 			RegisterMiddlewares(route.Handler, GlobalMiddlewares),
@@ -44,24 +44,24 @@ func registerRoutes(r *httprouter.Router, routes []Route){
 func (app *App) getRoutes() []Route {
 	return []Route{
 		{
-			Path: "/ping",
-			Method: http.MethodGet,
-			Handler: app.Ping,
-			Version: v1,
+			Path:        "/ping",
+			Method:      http.MethodGet,
+			Handler:     app.Ping,
+			Version:     v1,
 			Middlewares: []Middleware{},
 		},
 		{
-			Path: "/register",
-			Method: http.MethodPost,
-			Handler: app.Register,
-			Version: v1,
+			Path:        "/register",
+			Method:      http.MethodPost,
+			Handler:     app.Register,
+			Version:     v1,
 			Middlewares: []Middleware{},
 		},
 		{
-			Path: "/login",
-			Method: http.MethodPost,
-			Handler: app.Login,
-			Version: v1,
+			Path:        "/login",
+			Method:      http.MethodPost,
+			Handler:     app.Login,
+			Version:     v1,
 			Middlewares: []Middleware{},
 		},
 	}

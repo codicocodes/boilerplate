@@ -9,15 +9,15 @@ import (
 )
 
 type TestDB struct {
-		Conn *sql.DB
-		Queries *db.Queries
+	Conn    *sql.DB
+	Queries *db.Queries
 }
 
-func (c *TestDB) Close(){
+func (c *TestDB) Close() {
 	c.Conn.Close()
 }
 
-func (c *TestDB) Cleanup(){
+func (c *TestDB) Cleanup() {
 	if _, err := c.Conn.Exec("TRUNCATE users CASCADE;"); err != nil {
 		log.Fatalf("cannot cleanup database %s", err.Error())
 	}
@@ -27,7 +27,7 @@ func (c *TestDB) Cleanup(){
 func NewTestConnection() TestDB {
 	conn := PGConnection()
 	return TestDB{
-		Conn: conn,
+		Conn:    conn,
 		Queries: db.New(conn),
 	}
 }
@@ -45,4 +45,3 @@ func PGConnection() *sql.DB {
 	log.Printf("test database created: %s", dbName)
 	return conn
 }
-

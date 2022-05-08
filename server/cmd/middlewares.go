@@ -2,14 +2,13 @@ package main
 
 import "net/http"
 
-
 type Middleware func(http.HandlerFunc) http.HandlerFunc
 
 func CORS(next http.HandlerFunc) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Origin", getOrigin())
 		w.Header().Set("Access-Control-Allow-Headers", "Content-Type,Authorization")
-		next.ServeHTTP(w ,r)
+		next.ServeHTTP(w, r)
 	})
 }
 

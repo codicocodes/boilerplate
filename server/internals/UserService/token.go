@@ -11,7 +11,7 @@ import (
 const JWT_TIME_MINUTES = 60
 
 func getJwtSigningKey() []byte {
-   return []byte(os.Getenv("TOKEN_SECRET"))
+	return []byte(os.Getenv("TOKEN_SECRET"))
 }
 
 // JWT used to authenticate with and to grant authorization into the system
@@ -23,32 +23,32 @@ func (t JwtToken) Validate() (*Claims, error) {
 		return getJwtSigningKey(), nil
 	})
 	if err != nil || !tkn.Valid {
-     return nil, ErrInvalidToken
+		return nil, ErrInvalidToken
 	}
-  return claims, nil
+	return claims, nil
 }
 
-func (t JwtToken) GetUser(*UserData)  {
-   
+func (t JwtToken) GetUser(*UserData) {
+
 }
 
 type Claims struct {
-  ID       int64       `json:"id"`
-	Username string      `json:"username"`
+	ID       int64  `json:"id"`
+	Username string `json:"username"`
 	jwt.StandardClaims
 }
 
-func NewTokenFromUser(u db.User) (JwtToken, error)  {
-   expirationTime := time.Now().Add(JWT_TIME_MINUTES * time.Minute)
-   claims := &Claims{
-      ID: u.ID,
-      Username: u.Username,
-      StandardClaims: jwt.StandardClaims{
-         IssuedAt: time.Now().Unix(),
-         ExpiresAt: expirationTime.Unix(),
-      },
-   }
-   token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-   tokenString, err := token.SignedString(getJwtSigningKey()) 
-   return JwtToken(tokenString), err
+func NewTokenFromUser(u db.User) (JwtToken, error) {
+	expirationTime := time.Now().Add(JWT_TIME_MINUTES * time.Minute)
+	claims := &Claims{
+		ID:       u.ID,
+		Username: u.Username,
+		StandardClaims: jwt.StandardClaims{
+			IssuedAt:  time.Now().Unix(),
+			ExpiresAt: expirationTime.Unix(),
+		},
+	}
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	tokenString, err := token.SignedString(getJwtSigningKey())
+	return JwtToken(tokenString), err
 }

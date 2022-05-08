@@ -28,4 +28,3 @@ func (app *App) Router() http.Handler {
 	registerRoutes(r, routes)
 	return r
 }
-

@@ -11,7 +11,6 @@ import (
 	_ "github.com/lib/pq"
 )
 
-
 func main() {
 	logger := log.Default()
 	conn := connectDB(logger)

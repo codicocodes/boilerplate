@@ -39,8 +39,8 @@ func (app *App) Login(w http.ResponseWriter, r *http.Request) {
 	var input userservice.UserInput
 	err := json.NewDecoder(r.Body).Decode(&input)
 	if err != nil {
-		 http.Error(w, "Invalid user input", http.StatusBadRequest)
-		 return
+		http.Error(w, "Invalid user input", http.StatusBadRequest)
+		return
 	}
 	svc := userservice.New(app.db, input)
 	token, err := svc.Login()
