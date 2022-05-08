@@ -19,8 +19,8 @@ func New() *NotifierService {
 	}
 }
 
-func (s *NotifierService) Disconnect(id string) {
-	fmt.Printf("Disconnecting client\n")
+func (s *NotifierService) disconnect(id string) {
+	defer fmt.Printf("Closing channel for user: %s", id)
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	channel := s.clients[id]
@@ -28,14 +28,17 @@ func (s *NotifierService) Disconnect(id string) {
 	delete(s.clients, id)
 }
 
-func (s *NotifierService) Connect() (chan string, string) {
+func (s *NotifierService) Connect() (chan string, func()) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
-	id, _ := uuid.NewRandom()
+	uid, _ := uuid.NewRandom()
+	id := uid.String()
 	clientChan := make(chan string)
-	s.clients[id.String()] = clientChan
+	s.clients[id] = clientChan
 	fmt.Printf("Registered new client: %d clients registered\n", len(s.clients))
-	return clientChan, id.String()
+	return clientChan, func() {
+		s.disconnect(id)
+	}
 }
 
 func (s *NotifierService) BroadcastAll(msg string) {

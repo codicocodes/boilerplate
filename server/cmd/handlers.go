@@ -1,8 +1,8 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
+	"encoding/json"
 	"net/http"
 
 	userservice "github.com/codico/boilerplate/internals/UserService"
@@ -68,12 +68,11 @@ func (app *App) NotifierConnect(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	d := r.Context().Done()
-	notifier, id := app.notifier.Connect()
-	defer fmt.Printf("Closing channel for %s\n", id)
+	notifier, disconnect := app.notifier.Connect()
 	for {
 		select {
 		case <-d:
-			app.notifier.Disconnect(id)
+			disconnect()
 			return
 		case data := <-notifier:
 			fmt.Fprintf(w, "data: %v \n\n", data)

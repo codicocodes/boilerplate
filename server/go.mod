@@ -10,4 +10,4 @@ require (
 	golang.org/x/crypto v0.0.0-20220427172511-eb4f295cb31f
 )
 
-require github.com/google/uuid v1.3.0 // indirect
+require github.com/google/uuid v1.3.0
